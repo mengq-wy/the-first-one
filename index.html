@@ -1,0 +1,1228 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>政治大作战</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --ink:#2C3A45; --ink2:#63737F; --ink3:#9EACB7;
+  --line:#E3ECF1;
+  --green:#28C08A;  --green-d:#1FA878; --green-l:#E4FBF2;
+  --blue:#3E97F0;   --blue-l:#E6F2FE;
+  --rose:#FF6F91;   --rose-l:#FFE9EF;
+  --violet:#8B7BE8;
+  --amber:#FFC043;
+}
+html{-webkit-text-size-adjust:100%;}
+body{
+  min-height:100vh;
+  min-height:100dvh;
+  background:#fff; color:var(--ink);
+  font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  display:flex; justify-content:center; padding:30px 22px 48px;
+  -webkit-font-smoothing:antialiased;
+  position:relative; overflow-x:hidden;
+  padding-left:max(22px, env(safe-area-inset-left));
+  padding-right:max(22px, env(safe-area-inset-right));
+  padding-bottom:max(48px, env(safe-area-inset-bottom));
+}
+body::before{
+  content:''; position:fixed; z-index:-2;
+  top:-180px; left:-120px; width:620px; height:620px; border-radius:50%;
+  background:radial-gradient(circle at 30% 30%, rgba(40,192,138,.16), transparent 70%);
+  pointer-events:none;
+}
+body::after{
+  content:''; position:fixed; z-index:-2;
+  bottom:-220px; right:-160px; width:680px; height:680px; border-radius:50%;
+  background:radial-gradient(circle at 60% 60%, rgba(62,151,240,.15), transparent 70%);
+  pointer-events:none;
+}
+.bg-blob{
+  position:fixed; z-index:-2; border-radius:50%; pointer-events:none;
+  background:radial-gradient(circle at 50% 50%, rgba(255,111,145,.13), transparent 70%);
+}
+.bg-blob.b1{width:460px; height:460px; top:32%; right:-180px;}
+.bg-blob.b2{width:380px; height:380px; bottom:6%; left:-160px;
+  background:radial-gradient(circle at 50% 50%, rgba(139,123,232,.11), transparent 70%);}
+
+/* ============ 全屏按钮 ============ */
+.fs-btn{
+  position:fixed; top:18px; right:18px; z-index:100;
+  padding:10px 20px; font-size:14px; font-weight:800; font-family:inherit;
+  letter-spacing:1px; color:#1FA878;
+  background:rgba(255,255,255,.94);
+  border:1.5px solid #A5E8CC; border-radius:13px;
+  cursor:pointer; backdrop-filter:blur(8px);
+  box-shadow:0 6px 18px rgba(40,192,138,.16);
+  transition:.2s;
+  -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;
+}
+.fs-btn:hover{background:#E4FBF2; transform:translateY(-1px); box-shadow:0 10px 24px rgba(40,192,138,.28);}
+
+.app{width:100%; max-width:1240px; position:relative; z-index:1;}
+.view{display:none;}
+.view.on{display:block; animation:fadeUp .4s cubic-bezier(.2,.8,.3,1);}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:none;}}
+
+/* ================= 标题区域 ================= */
+.head{text-align:center; margin-bottom:clamp(22px,2.4vw,38px); position:relative;}
+.head::before{
+  content:''; position:absolute; left:50%; top:-16px; transform:translateX(-50%);
+  width:min(440px,60vw); height:160px; z-index:0;
+  background:radial-gradient(ellipse at center, rgba(40,192,138,.17), transparent 68%);
+  pointer-events:none;
+}
+.title-row{display:flex; justify-content:center; align-items:center; gap:clamp(10px,1.4vw,22px); position:relative; z-index:1;}
+.spark{
+  font-size:clamp(16px,1.7vw,28px); line-height:1; color:var(--amber);
+  animation:twinkle 2.2s ease-in-out infinite;
+  text-shadow:0 0 12px rgba(255,192,67,.55);
+}
+.spark.s2{color:var(--rose); animation-delay:.7s; text-shadow:0 0 12px rgba(255,111,145,.5);}
+@keyframes twinkle{
+  0%,100%{transform:scale(1) rotate(0deg); opacity:.85;}
+  50%{transform:scale(1.25) rotate(18deg); opacity:1;}
+}
+.head h1{
+  font-size:clamp(36px,4.4vw,68px);
+  font-weight:900; letter-spacing:clamp(7px,.8vw,13px); text-indent:clamp(7px,.8vw,13px);
+  line-height:1.12;
+  background:linear-gradient(120deg,#1FA878 0%,#28C08A 30%,#3E97F0 68%,#8B7BE8 100%);
+  -webkit-background-clip:text; background-clip:text;
+  color:transparent; display:inline-block;
+  filter:drop-shadow(0 4px 14px rgba(40,192,138,.22));
+}
+.title-bar{
+  width:clamp(110px,13vw,190px); height:5px; margin:clamp(10px,1.2vw,18px) auto 0;
+  border-radius:5px;
+  background:linear-gradient(90deg,#28C08A,#3E97F0,#FF6F91,#FFC043);
+  background-size:200% 100%;
+  box-shadow:0 3px 14px rgba(62,151,240,.3);
+  animation:barFlow 4s linear infinite;
+}
+@keyframes barFlow{from{background-position:0% 0;}to{background-position:200% 0;}}
+.slogan-badge{
+  display:inline-block; margin-top:clamp(12px,1.4vw,20px);
+  font-size:clamp(17px,1.75vw,27px);
+  font-weight:800; letter-spacing:clamp(5px,.7vw,10px); text-indent:clamp(5px,.7vw,10px);
+  color:#fff; position:relative;
+  background:linear-gradient(135deg,#28C08A 0%,#1FA878 55%,#3E97F0 100%);
+  padding:clamp(9px,.9vw,14px) clamp(22px,2.4vw,38px); border-radius:999px;
+  box-shadow:0 12px 26px rgba(40,192,138,.4), inset 0 -2px 0 rgba(0,0,0,.08);
+}
+.slogan-badge::after{
+  content:''; position:absolute; inset:3px; border-radius:999px;
+  border:1.5px dashed rgba(255,255,255,.42); pointer-events:none;
+}
+.subline{font-size:clamp(12px,1.05vw,16px); color:var(--ink3); letter-spacing:2.5px; margin-top:clamp(12px,1.3vw,18px);}
+
+/* ================= 规则卡 ================= */
+.brief{
+  max-width:clamp(560px,62vw,760px); margin:0 auto; position:relative;
+  border:1.5px solid var(--line); border-radius:20px;
+  background:linear-gradient(180deg,#FBFEFD,#fff);
+  padding:clamp(16px,1.6vw,26px) clamp(22px,2.4vw,34px) clamp(18px,1.8vw,28px);
+  box-shadow:0 6px 22px rgba(140,170,190,.08);
+  overflow:hidden;
+}
+.brief::before{
+  content:''; position:absolute; left:0; top:0; bottom:0; width:4px;
+  background:linear-gradient(180deg,#28C08A,#3E97F0,#FF6F91);
+}
+.brief-head{
+  font-size:clamp(12.5px,1vw,15px); letter-spacing:3px; color:var(--ink2);
+  margin-bottom:clamp(12px,1.2vw,18px);
+  display:flex; align-items:center; gap:12px; font-weight:700;
+}
+.brief-head::after{content:''; flex:1; height:1px; background:linear-gradient(90deg,#C9E8DC,transparent);}
+.brief-list{list-style:none; display:flex; flex-direction:column; gap:clamp(8px,.85vw,13px);}
+.brief-list li{
+  font-size:clamp(13px,1.05vw,16.5px); line-height:1.6; color:#54636F;
+  display:flex; gap:11px; align-items:flex-start;
+}
+.brief-list li::before{
+  content:''; width:7px; height:7px; border-radius:99px;
+  background:linear-gradient(135deg,#28C08A,#3E97F0);
+  margin-top:8px; flex:0 0 auto;
+  box-shadow:0 0 8px rgba(40,192,138,.5);
+}
+
+/* ================= 范围设置 ================= */
+.range-row{
+  display:flex; align-items:center; justify-content:center; flex-wrap:wrap;
+  gap:clamp(8px,.9vw,14px); margin:clamp(20px,2vw,30px) auto 0;
+  max-width:clamp(520px,58vw,680px); position:relative;
+  border:1.5px solid var(--line); border-radius:16px;
+  background:linear-gradient(180deg,#FBFEFD,#fff);
+  padding:clamp(11px,1vw,17px) clamp(16px,1.8vw,26px);
+  box-shadow:0 6px 20px rgba(140,170,190,.08);
+}
+.range-label{font-size:clamp(12px,1vw,15px); letter-spacing:2px; color:var(--ink2); font-weight:700;}
+.range-input{
+  font-family:inherit; width:clamp(76px,7vw,110px); text-align:center;
+  font-size:16px; font-weight:800; color:var(--ink);
+  border:1.5px solid var(--line); border-radius:11px;
+  padding:clamp(7px,.7vw,11px) 6px; background:#fff; outline:none;
+  transition:.18s; font-variant-numeric:tabular-nums;
+  -webkit-appearance:none;
+}
+.range-input:focus{border-color:#7BE0BB; box-shadow:0 0 0 3px rgba(40,192,138,.16);}
+.range-input:disabled{opacity:.5; cursor:not-allowed; background:#F5F9FB;}
+.range-input.err{border-color:#FFC2CE; background:#FFE9EF;}
+.range-sep{color:var(--ink3); font-size:14px; font-weight:700;}
+.range-hint{
+  font-size:clamp(11.5px,.95vw,14px); font-weight:700; letter-spacing:.5px;
+  min-width:104px; text-align:left; color:#1FA878;
+}
+.range-hint.err{color:#E8506F;}
+
+/* ================= 抽号区 ================= */
+.draw-row{
+  display:flex; align-items:center; gap:clamp(12px,1.4vw,24px);
+  margin:clamp(18px,1.8vw,30px) auto 0;
+  max-width:clamp(600px,68vw,880px);
+}
+.slot{
+  flex:1; border-radius:22px; padding:clamp(14px,1.4vw,24px) 10px clamp(18px,1.8vw,28px); position:relative;
+  display:flex; flex-direction:column; align-items:center; gap:6px;
+  transition:.3s; overflow:hidden;
+}
+.slot::after{
+  content:''; position:absolute; top:-40px; right:-40px; width:130px; height:130px;
+  border-radius:50%; pointer-events:none; opacity:.5;
+}
+.slot-a{
+  background:linear-gradient(160deg,#EBF6FF 0%,#fff 70%);
+  border:1.5px solid #CFE7FA;
+  box-shadow:0 8px 22px rgba(62,151,240,.12);
+}
+.slot-a::after{background:radial-gradient(circle at 40% 40%, rgba(62,151,240,.24), transparent 70%);}
+.slot-b{
+  background:linear-gradient(160deg,#FFEFF3 0%,#fff 70%);
+  border:1.5px solid #FBD5DF;
+  box-shadow:0 8px 22px rgba(255,111,145,.12);
+}
+.slot-b::after{background:radial-gradient(circle at 40% 40%, rgba(255,111,145,.22), transparent 70%);}
+.slot-tag{font-size:clamp(12px,1vw,15px); letter-spacing:2px; color:var(--ink3); font-weight:700;}
+.slot-a .slot-tag{color:#3E97F0;}
+.slot-b .slot-tag{color:#FF6F91;}
+.slot-num{
+  font-size:clamp(52px,5.8vw,96px); font-weight:900; line-height:1.05;
+  font-variant-numeric:tabular-nums; letter-spacing:1px;
+}
+.slot-a .slot-num{color:var(--blue); text-shadow:0 4px 14px rgba(62,151,240,.24);}
+.slot-b .slot-num{color:var(--rose); text-shadow:0 4px 14px rgba(255,111,145,.24);}
+.slot-num.rolling{opacity:.5;}
+.slot-num.pop{animation:pop .42s cubic-bezier(.2,1.6,.4,1);}
+@keyframes pop{0%{transform:scale(.7);opacity:.4;}60%{transform:scale(1.12);}100%{transform:scale(1);}}
+.vs{
+  flex:0 0 auto; font-weight:900; letter-spacing:1px;
+  color:#fff; border-radius:50%;
+  width:clamp(40px,3.6vw,58px); height:clamp(40px,3.6vw,58px);
+  font-size:clamp(13px,1.2vw,18px);
+  display:flex; align-items:center; justify-content:center;
+  background:linear-gradient(135deg,#8B7BE8,#FF6F91);
+  box-shadow:0 8px 18px rgba(139,123,232,.36);
+}
+
+/* ================= 按钮 ================= */
+.btns{margin-top:clamp(22px,2.2vw,36px); display:flex; flex-direction:column; align-items:center; gap:14px;}
+.btn{
+  font-family:inherit; cursor:pointer; border:none;
+  border-radius:15px; letter-spacing:3px; font-weight:800;
+  transition:.22s; width:100%; max-width:clamp(320px,36vw,460px); position:relative;
+  -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;
+}
+.btn-draw{
+  padding:clamp(12px,1vw,17px) 0;
+  font-size:clamp(14px,1.15vw,18px);
+  background:#fff; color:var(--green-d);
+  border:1.8px solid #A5E8CC;
+  box-shadow:0 6px 18px rgba(40,192,138,.14);
+}
+.btn-draw:hover:not(:disabled){
+  background:var(--green-l); transform:translateY(-2px);
+  border-color:#7BE0BB; box-shadow:0 10px 24px rgba(40,192,138,.24);
+}
+.btn-start{
+  padding:clamp(15px,1.3vw,21px) 0;
+  font-size:clamp(16px,1.35vw,21px); color:#fff;
+  background:linear-gradient(135deg,#34D19A 0%,#1FA878 100%);
+  box-shadow:0 12px 28px rgba(40,192,138,.42), inset 0 -3px 0 rgba(0,0,0,.09);
+  overflow:hidden;
+}
+.btn-start::before{
+  content:''; position:absolute; top:0; left:-70%; width:50%; height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.35),transparent);
+  transform:skewX(-20deg);
+  animation:shine 3.2s ease-in-out infinite;
+}
+@keyframes shine{0%{left:-70%;}55%,100%{left:130%;}}
+.btn-start:hover:not(:disabled){transform:translateY(-3px); box-shadow:0 16px 34px rgba(40,192,138,.52);}
+.btn:disabled{opacity:.4; cursor:not-allowed; transform:none!important; box-shadow:none;}
+.btn:disabled::before{display:none;}
+
+/* ================= 对战页 · 题目卡 ================= */
+.qcard{
+  border:1.5px solid var(--line); border-radius:20px;
+  padding:clamp(16px,1.6vw,26px) clamp(20px,2vw,32px) clamp(18px,1.8vw,28px);
+  background:linear-gradient(180deg,#FBFEFD,#fff);
+  box-shadow:0 8px 26px rgba(140,170,190,.09);
+  position:relative; overflow:hidden;
+}
+.qcard::before{
+  content:''; position:absolute; top:-60px; right:-60px; width:200px; height:200px;
+  border-radius:50%; pointer-events:none;
+  background:radial-gradient(circle at 40% 40%, rgba(40,192,138,.13), transparent 70%);
+}
+.qmeta{
+  display:flex; justify-content:space-between; align-items:center;
+  font-size:clamp(12px,1vw,15px); color:var(--ink2); letter-spacing:1.5px; position:relative;
+}
+.qmeta #qnum{font-weight:800; color:#1FA878;}
+.qmeta #qtime{
+  font-size:clamp(20px,1.85vw,30px); font-weight:900; font-variant-numeric:tabular-nums;
+  color:#fff; letter-spacing:0;
+  background:linear-gradient(135deg,#4FA5F5,#3E97F0);
+  padding:clamp(5px,.55vw,9px) clamp(16px,1.6vw,26px); border-radius:999px;
+  min-width:clamp(80px,7.5vw,116px); text-align:center;
+  box-shadow:0 6px 18px rgba(62,151,240,.44), inset 0 -2px 0 rgba(0,0,0,.08);
+  transition:background .3s, box-shadow .3s;
+}
+.qmeta #qtime.low{
+  background:linear-gradient(135deg,#FF7E9C,#FF5A80);
+  box-shadow:0 6px 22px rgba(255,111,145,.6);
+  animation:pulse .65s ease-in-out infinite;
+}
+@keyframes pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.1);}}
+.qbar{height:clamp(6px,.7vw,9px); background:#EAF2F7; border-radius:99px; margin-top:clamp(10px,1vw,15px); overflow:hidden; position:relative;}
+.qbar-fill{height:100%; width:100%; border-radius:99px; transition:width .1s linear;
+  background:linear-gradient(90deg,#4EE0A8,#28C08A);
+  box-shadow:0 0 12px rgba(40,192,138,.5);}
+.qbar-fill.low{background:linear-gradient(90deg,#FF9DB4,#FF5A80); box-shadow:0 0 12px rgba(255,111,145,.55);}
+.qbar-fill.done{background:linear-gradient(90deg,#4EE0A8,#28C08A);}
+.qtext{
+  font-size:clamp(14.5px,1.32vw,21px); line-height:1.75; color:#2C3A45;
+  margin-top:clamp(13px,1.3vw,20px); font-weight:700; letter-spacing:.3px; position:relative;
+}
+
+/* ================= 对战页 · 双方面板 ================= */
+.arena{display:grid; grid-template-columns:1fr 1fr; gap:clamp(10px,1.2vw,20px); margin-top:clamp(14px,1.4vw,22px);}
+.panel{
+  border:1.5px solid var(--line); border-radius:20px;
+  padding:clamp(13px,1.3vw,22px) clamp(13px,1.3vw,22px) clamp(15px,1.5vw,24px);
+  transition:.25s; position:relative; overflow:hidden;
+}
+.panel::before{
+  content:''; position:absolute; top:-46px; right:-46px; width:140px; height:140px;
+  border-radius:50%; pointer-events:none; opacity:.6;
+}
+#p0{background:linear-gradient(165deg,#F0F7FE,#fff 72%); border-color:#D6E8F9;}
+#p0::before{background:radial-gradient(circle at 40% 40%, rgba(62,151,240,.2), transparent 70%);}
+#p1{background:linear-gradient(165deg,#FFF0F4,#fff 72%); border-color:#FBD7E0;}
+#p1::before{background:radial-gradient(circle at 40% 40%, rgba(255,111,145,.18), transparent 70%);}
+.panel.active{border-color:#7BE0BB; box-shadow:0 0 0 3px rgba(40,192,138,.16), 0 8px 22px rgba(40,192,138,.14);}
+.p-head{display:flex; justify-content:space-between; align-items:baseline; position:relative;}
+.p-name{font-size:clamp(12px,1vw,15px); letter-spacing:2px; color:var(--ink3); font-weight:800;}
+#p0 .p-name{color:#3E97F0;}
+#p1 .p-name{color:#FF6F91;}
+.p-score{font-size:clamp(24px,2.4vw,42px); font-weight:900; font-variant-numeric:tabular-nums; line-height:1;}
+#p0 .p-score{color:var(--blue); text-shadow:0 3px 10px rgba(62,151,240,.22);}
+#p1 .p-score{color:var(--rose); text-shadow:0 3px 10px rgba(255,111,145,.22);}
+.p-num{font-size:clamp(11px,.9vw,14px); color:var(--ink3); margin-top:5px; letter-spacing:1px; position:relative;}
+.opts{display:flex; flex-direction:column; gap:clamp(6px,.65vw,10px); margin-top:clamp(10px,1vw,15px); position:relative;}
+.opt{
+  font-family:inherit; text-align:left; cursor:pointer;
+  border:1.5px solid var(--line); border-radius:12px; background:#fff;
+  padding:clamp(8px,.75vw,13px) clamp(9px,.9vw,15px);
+  display:flex; gap:9px; align-items:flex-start;
+  font-size:clamp(12px,1.02vw,16px); line-height:1.5; color:#54636F; transition:.15s;
+  -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;
+}
+.opt:hover:not(:disabled){border-color:#7BE0BB; background:var(--green-l); transform:translateX(2px);}
+.opt:disabled{cursor:not-allowed; opacity:.5;}
+.opt-key{font-weight:900; color:#8B99A5; flex:0 0 auto;}
+.opt-txt{flex:1;}
+.opt.reveal-right{background:#DDF9EC; border-color:#8FE6C2; color:#189C6C; opacity:1;}
+.opt.reveal-right .opt-key{color:#1FA878;}
+.opt.pick-wrong{background:#FFE1E8; border-color:#FFB6C6; color:#D93F63; opacity:1;}
+.opt.pick-wrong .opt-key{color:#E8506F;}
+.opt.pick-right{background:#DDF9EC; border-color:#8FE6C2; color:#189C6C; opacity:1;}
+.opt.pick-right .opt-key{color:#1FA878;}
+.p-status{
+  margin-top:clamp(10px,1vw,15px); font-size:clamp(11.5px,.95vw,14px);
+  font-weight:700; letter-spacing:1px; text-align:center;
+  padding:clamp(6px,.6vw,10px); border-radius:10px;
+  background:#F0F5F8; color:var(--ink3); transition:.25s; position:relative;
+}
+.p-status.ok{color:#189C6C; background:#DDF9EC;}
+.p-status.bad{color:#D93F63; background:#FFE1E8;}
+
+/* ================= 日志 ================= */
+.logbox{
+  margin-top:clamp(14px,1.4vw,22px); height:clamp(120px,10vw,170px); overflow-y:auto;
+  border:1.5px solid var(--line); border-radius:18px;
+  background:linear-gradient(180deg,#FBFEFD,#fff);
+  padding:clamp(11px,1vw,17px) clamp(14px,1.4vw,22px);
+  display:flex; flex-direction:column; gap:8px;
+  box-shadow:0 6px 20px rgba(140,170,190,.07);
+}
+.logbox::-webkit-scrollbar{width:6px;}
+.logbox::-webkit-scrollbar-thumb{background:#D3E4EC; border-radius:99px;}
+.log-item{font-size:clamp(12px,1vw,15px); color:#63737F; line-height:1.6; letter-spacing:.3px;}
+.log-item b{color:#2C3A45; font-weight:800;}
+
+.acts-end{margin-top:16px; display:none; gap:14px; justify-content:center; flex-wrap:wrap;}
+
+/* ================= 结算浮层 ================= */
+.overlay{
+  position:fixed; inset:0; z-index:60; background:rgba(255,255,255,.92);
+  backdrop-filter:blur(7px); display:none; align-items:center; justify-content:center; padding:20px;
+}
+.overlay.on{display:flex; animation:fadeUp .35s ease;}
+.result-card{
+  background:#fff; border:1.5px solid var(--line); border-radius:26px;
+  padding:clamp(28px,3vw,48px) clamp(30px,3.4vw,54px) clamp(26px,2.8vw,44px);
+  text-align:center; width:100%; max-width:clamp(400px,42vw,560px);
+  box-shadow:0 28px 70px rgba(100,130,150,.18);
+  position:relative; overflow:hidden;
+}
+.result-card::before{
+  content:''; position:absolute; top:0; left:0; right:0; height:5px;
+  background:linear-gradient(90deg,#28C08A,#3E97F0,#FF6F91,#FFC043);
+}
+.result-title{
+  font-size:clamp(22px,2.2vw,36px); font-weight:900; letter-spacing:3px;
+  background:linear-gradient(120deg,#1FA878,#3E97F0);
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+}
+.result-sub{font-size:clamp(12px,1.05vw,16px); color:var(--ink3); letter-spacing:2px; margin-top:10px;}
+.result-scores{display:flex; justify-content:center; gap:clamp(22px,2.4vw,44px); margin:clamp(22px,2.2vw,36px) 0;}
+.rs{display:flex; flex-direction:column; gap:6px; align-items:center;}
+.rs-name{font-size:clamp(11.5px,1vw,15px); letter-spacing:2px; color:var(--ink3); font-weight:700;}
+.rs-num{font-size:clamp(12px,1vw,15px); color:var(--ink3);}
+.rs-score{font-size:clamp(30px,3vw,52px); font-weight:900; font-variant-numeric:tabular-nums;}
+.rs0 .rs-score{color:var(--blue); text-shadow:0 4px 14px rgba(62,151,240,.24);}
+.rs1 .rs-score{color:var(--rose); text-shadow:0 4px 14px rgba(255,111,145,.24);}
+.result-btns{display:flex; flex-direction:column; gap:12px; align-items:center;}
+
+/* =========================================================
+   响应式：平板竖屏 / 大手机横屏（≤ 900px）
+   ========================================================= */
+@media (max-width:900px){
+  body{padding:22px 16px 36px;}
+  .app{max-width:100%;}
+  .fs-btn{top:12px; right:12px; padding:8px 14px; font-size:12.5px;}
+  .head h1{font-size:clamp(32px,5vw,44px); letter-spacing:clamp(5px,.9vw,8px); text-indent:clamp(5px,.9vw,8px);}
+  .slogan-badge{font-size:clamp(15px,2vw,19px); letter-spacing:clamp(4px,.8vw,6px); text-indent:clamp(4px,.8vw,6px);}
+  .subline{font-size:12px; letter-spacing:1.8px;}
+  .brief{max-width:100%;}
+  .range-row{max-width:100%;}
+  .draw-row{max-width:100%;}
+  .slot-num{font-size:clamp(46px,9vw,72px);}
+  .btn{max-width:340px;}
+  .qtext{font-size:clamp(14px,1.8vw,17px); line-height:1.7;}
+  .qmeta #qtime{font-size:clamp(17px,2.4vw,22px); min-width:70px; padding:5px 16px;}
+  .p-score{font-size:clamp(22px,3.4vw,30px);}
+  .opt{font-size:clamp(12px,1.5vw,13.5px); padding:10px 12px; min-height:44px; gap:8px;}
+  .opt-key{font-size:clamp(12.5px,1.6vw,14px);}
+  .p-status{font-size:12px; padding:8px;}
+  .logbox{height:110px;}
+  .log-item{font-size:12.5px;}
+  .result-card{max-width:100%;}
+  .rs-score{font-size:clamp(28px,5vw,38px);}
+}
+
+/* =========================================================
+   响应式：手机竖屏（≤ 600px）—— 选项面板上下堆叠
+   ========================================================= */
+@media (max-width:600px){
+  body{padding:16px 12px 28px;}
+  .fs-btn{top:10px; right:10px; padding:7px 11px; font-size:11.5px; border-radius:10px;}
+
+  /* 标题 */
+  .head{margin-bottom:16px;}
+  .head::before{width:280px; height:110px;}
+  .head h1{font-size:32px; letter-spacing:6px; text-indent:6px;}
+  .spark{font-size:14px;}
+  .title-bar{width:100px; height:4px; margin-top:10px;}
+  .slogan-badge{font-size:15px; letter-spacing:4px; text-indent:4px; padding:7px 20px; margin-top:12px;}
+  .slogan-badge::after{inset:2px;}
+  .subline{font-size:11px; letter-spacing:1.2px; margin-top:10px;}
+
+  /* 规则 */
+  .brief{padding:13px 15px 15px; border-radius:15px;}
+  .brief-head{font-size:11.5px; letter-spacing:2px; margin-bottom:10px;}
+  .brief-list{gap:6px;}
+  .brief-list li{font-size:12px; gap:9px; line-height:1.55;}
+  .brief-list li::before{width:6px; height:6px; margin-top:6px;}
+
+  /* 号码范围 */
+  .range-row{padding:10px 12px; gap:7px; margin-top:14px; border-radius:13px;}
+  .range-label{font-size:11.5px; letter-spacing:1px;}
+  .range-input{width:64px; padding:8px 4px; font-size:16px; border-radius:9px;}
+  .range-hint{flex-basis:100%; text-align:center; min-width:0; font-size:11px;}
+
+  /* 抽号 */
+  .draw-row{gap:8px; margin-top:14px;}
+  .slot{padding:10px 8px 14px; border-radius:16px;}
+  .slot-tag{font-size:11px; letter-spacing:1px;}
+  .slot-num{font-size:42px;}
+  .vs{width:32px; height:32px; font-size:11px;}
+
+  /* 按钮 */
+  .btns{margin-top:18px; gap:10px;}
+  .btn{max-width:100%; border-radius:13px;}
+  .btn-draw{padding:13px 0; font-size:14px;}
+  .btn-start{padding:16px 0; font-size:16px;}
+
+  /* 对战 · 题目 */
+  .qcard{padding:13px 15px 15px; border-radius:15px;}
+  .qmeta{font-size:11.5px; letter-spacing:1px;}
+  .qmeta #qtime{font-size:17px; min-width:64px; padding:4px 13px;}
+  .qbar{height:5px; margin-top:8px;}
+  .qtext{font-size:13.5px; line-height:1.65; margin-top:11px;}
+
+  /* 对战 · 面板 —— 上下堆叠 */
+  .arena{grid-template-columns:1fr; gap:10px; margin-top:12px;}
+  .panel{padding:11px 13px 13px; border-radius:15px;}
+  .p-name{font-size:11px; letter-spacing:1.5px;}
+  .p-score{font-size:26px;}
+  .p-num{font-size:10.5px; margin-top:3px;}
+
+  /* 选项：易点、字号可读 */
+  .opts{gap:7px; margin-top:9px;}
+  .opt{padding:10px 12px; font-size:12.5px; line-height:1.55; border-radius:11px; min-height:46px; gap:8px;}
+  .opt-key{font-size:13px;}
+  .p-status{font-size:11.5px; padding:7px; margin-top:9px; border-radius:9px; letter-spacing:.6px;}
+
+  /* 日志 */
+  .logbox{height:96px; padding:9px 12px; border-radius:13px; margin-top:12px; gap:6px;}
+  .log-item{font-size:11.5px; line-height:1.5;}
+
+  .acts-end{margin-top:12px; gap:10px;}
+  .acts-end .btn{font-size:14px; padding:13px 0;}
+
+  /* 结算 */
+  .overlay{padding:16px;}
+  .result-card{padding:24px 20px 22px; border-radius:20px;}
+  .result-title{font-size:21px; letter-spacing:2px;}
+  .result-sub{font-size:11.5px; margin-top:7px; letter-spacing:1.2px;}
+  .result-scores{gap:22px; margin:18px 0 20px;}
+  .rs-name{font-size:11px;}
+  .rs-num{font-size:11px;}
+  .rs-score{font-size:28px;}
+  .result-btns{gap:9px;}
+  .result-btns .btn{max-width:240px; font-size:14px; padding:13px 0;}
+}
+
+/* =========================================================
+   响应式：手机横屏（矮屏）—— 全面压缩，横向并排
+   ========================================================= */
+@media (orientation:landscape) and (max-height:560px){
+  body{padding:10px 14px 16px; align-items:flex-start;}
+
+  .fs-btn{top:6px; right:8px; padding:5px 10px; font-size:10.5px; border-radius:8px;}
+
+  /* 标题 */
+  .head{margin-bottom:8px;}
+  .head::before{display:none;}
+  .title-row{gap:8px;}
+  .head h1{font-size:24px; letter-spacing:4px; text-indent:4px; line-height:1.1;}
+  .spark{font-size:12px;}
+  .title-bar{width:72px; height:3px; margin-top:4px; border-radius:3px;}
+  .slogan-badge{font-size:11px; letter-spacing:2.5px; text-indent:2.5px; padding:3px 13px; margin-top:6px;}
+  .slogan-badge::after{display:none;}
+  .subline{font-size:9.5px; letter-spacing:.8px; margin-top:5px;}
+
+  /* 规则 —— 只留紧凑版 */
+  .brief{max-width:100%; padding:8px 14px 10px; border-radius:11px;}
+  .brief-head{font-size:10px; letter-spacing:1.5px; margin-bottom:6px;}
+  .brief-list{gap:3px;}
+  .brief-list li{font-size:10px; gap:7px; line-height:1.4;}
+  .brief-list li::before{width:4px; height:4px; margin-top:5px;}
+
+  /* 号码范围 */
+  .range-row{
+    padding:6px 12px; gap:7px; margin-top:8px;
+    border-radius:10px; max-width:100%;
+    flex-wrap:nowrap;
+  }
+  .range-label{font-size:10px; letter-spacing:1px;}
+  .range-input{width:56px; padding:5px 4px; font-size:16px; border-radius:7px;}
+  .range-hint{flex-basis:auto; min-width:78px; font-size:10px; text-align:left;}
+
+  /* 抽号 */
+  .draw-row{gap:10px; margin-top:8px; max-width:100%;}
+  .slot{padding:6px 10px 9px; border-radius:12px;}
+  .slot::after{display:none;}
+  .slot-tag{font-size:9.5px; letter-spacing:1px;}
+  .slot-num{font-size:34px; text-shadow:none!important;}
+  .vs{width:26px; height:26px; font-size:9.5px; box-shadow:0 4px 10px rgba(139,123,232,.3);}
+
+  /* 按钮 —— 横向排列 */
+  .btns{
+    margin-top:10px; gap:10px;
+    flex-direction:row; justify-content:center; flex-wrap:nowrap;
+  }
+  .btn{max-width:200px; border-radius:10px; letter-spacing:2px;}
+  .btn-draw{padding:9px 0; font-size:11.5px;}
+  .btn-start{padding:11px 0; font-size:12.5px; box-shadow:0 6px 16px rgba(40,192,138,.35), inset 0 -2px 0 rgba(0,0,0,.08);}
+  .btn-start::before{display:none;}
+
+  /* 对战页 —— 全部压缩到一屏左右 */
+  .qcard{padding:7px 14px 9px; border-radius:11px;}
+  .qcard::before{display:none;}
+  .qmeta{font-size:10px; letter-spacing:.8px;}
+  .qmeta #qtime{font-size:13px; min-width:50px; padding:2px 9px; box-shadow:0 3px 8px rgba(62,151,240,.35);}
+  .qbar{height:3.5px; margin-top:5px;}
+  .qtext{font-size:11.5px; line-height:1.45; margin-top:7px; font-weight:700;}
+
+  /* 面板横向并排 */
+  .arena{grid-template-columns:1fr 1fr; gap:8px; margin-top:7px;}
+  .panel{padding:7px 9px 9px; border-radius:11px;}
+  .panel::before{display:none;}
+  .p-name{font-size:9.5px; letter-spacing:1px;}
+  .p-score{font-size:18px;}
+  .p-num{font-size:9px; margin-top:1px; letter-spacing:.5px;}
+
+  /* 选项 */
+  .opts{gap:4px; margin-top:5px;}
+  .opt{
+    padding:5px 8px; font-size:10.5px; line-height:1.35;
+    border-radius:7px; min-height:30px; gap:6px;
+  }
+  .opt-key{font-size:10.5px;}
+  .p-status{font-size:9.5px; padding:4px; margin-top:5px; border-radius:6px; letter-spacing:.4px;}
+
+  /* 日志 */
+  .logbox{height:56px; padding:6px 11px; border-radius:9px; margin-top:7px; gap:3px;}
+  .log-item{font-size:10px; line-height:1.4;}
+
+  .acts-end{margin-top:7px; gap:8px;}
+  .acts-end .btn{font-size:11px; padding:8px 0; max-width:170px;}
+
+  /* 结算 */
+  .overlay{padding:12px;}
+  .result-card{padding:16px 22px 18px; max-width:400px; border-radius:16px;}
+  .result-title{font-size:19px; letter-spacing:2px;}
+  .result-sub{font-size:10.5px; margin-top:5px; letter-spacing:1px;}
+  .result-scores{gap:26px; margin:12px 0 14px;}
+  .rs-name{font-size:10px;}
+  .rs-num{font-size:10px;}
+  .rs-score{font-size:26px;}
+  .result-btns{gap:7px;}
+  .result-btns .btn{max-width:210px; font-size:11.5px; padding:9px 0; border-radius:10px;}
+}
+
+/* =========================================================
+   极小屏横屏（如 iPhone SE 横屏 568x320）—— 再压一层
+   ========================================================= */
+@media (orientation:landscape) and (max-height:380px){
+  .head h1{font-size:20px; letter-spacing:3px; text-indent:3px;}
+  .slogan-badge{font-size:10px; padding:2px 11px; letter-spacing:2px; text-indent:2px;}
+  .subline{display:none;}
+  .brief{display:none;}          /* 极矮屏隐藏规则卡，让位给对战 */
+  .range-row{margin-top:6px;}
+  .slot-num{font-size:28px;}
+  .btn-draw{padding:7px 0; font-size:10.5px;}
+  .btn-start{padding:9px 0; font-size:11.5px;}
+  .qtext{font-size:11px; margin-top:5px; line-height:1.4;}
+  .p-score{font-size:16px;}
+  .opt{padding:4px 7px; font-size:9.5px; min-height:26px; line-height:1.3;}
+  .logbox{height:44px; padding:4px 10px;}
+  .log-item{font-size:9px;}
+}
+</style>
+</head>
+<body>
+<div class="bg-blob b1"></div>
+<div class="bg-blob b2"></div>
+
+<button class="fs-btn" id="fsBtn">⛶ 全屏</button>
+
+<div class="app">
+
+  <!-- ================= 抽取页 ================= -->
+  <section id="view-draw" class="view on">
+    <header class="head">
+      <div class="title-row">
+        <span class="spark s1">✦</span>
+        <h1>政治大作战</h1>
+        <span class="spark s2">✦</span>
+      </div>
+      <div class="title-bar"></div>
+      <div class="slogan-badge">贯彻新发展理念</div>
+      <p class="subline">选择题抢答 · 双人对战</p>
+    </header>
+
+    <div class="brief">
+      <div class="brief-head">对 战 规 则</div>
+      <ul class="brief-list">
+        <li>本次作战题目皆为选择题，从题库中随机抽取 5 道。</li>
+        <li>每道题作答时间为 25 秒。</li>
+        <li>两位玩家抢答，先答对得 10 分，后答对得 5 分。</li>
+        <li>答错锁定答题区域不允许再做答，并且扣 10 分。</li>
+        <li>两位玩家都完成作答后，停顿 2 秒直接进入下一题。</li>
+      </ul>
+    </div>
+
+    <div class="range-row">
+      <span class="range-label">号码范围</span>
+      <input type="number" class="range-input" id="rangeMin" value="1" min="1" max="998" step="1" inputmode="numeric">
+      <span class="range-sep">—</span>
+      <input type="number" class="range-input" id="rangeMax" value="70" min="2" max="999" step="1" inputmode="numeric">
+      <span class="range-hint" id="rangeHint">共 70 个号码</span>
+    </div>
+
+    <div class="draw-row">
+      <div class="slot slot-a">
+        <div class="slot-tag">玩家 1</div>
+        <div class="slot-num" id="numA">--</div>
+      </div>
+      <div class="vs">VS</div>
+      <div class="slot slot-b">
+        <div class="slot-tag">玩家 2</div>
+        <div class="slot-num" id="numB">--</div>
+      </div>
+    </div>
+
+    <div class="btns">
+      <button class="btn btn-draw" id="drawBtn">抽 取 号 码</button>
+      <button class="btn btn-start" id="startBtn" disabled>开 始 对 战</button>
+    </div>
+  </section>
+
+  <!-- ================= 对战页 ================= -->
+  <section id="view-battle" class="view">
+    <header class="head">
+      <div class="title-row">
+        <span class="spark s1">✦</span>
+        <h1>政治大作战</h1>
+        <span class="spark s2">✦</span>
+      </div>
+      <div class="title-bar"></div>
+      <div class="slogan-badge">贯彻新发展理念</div>
+      <p class="subline">先答对得 10 分 · 后答对得 5 分 · 答错扣 10 分并锁定</p>
+    </header>
+
+    <div class="qcard">
+      <div class="qmeta">
+        <span id="qnum">第 1 / 5 题</span>
+        <span id="qtime">25s</span>
+      </div>
+      <div class="qbar"><div class="qbar-fill" id="qbarFill"></div></div>
+      <div class="qtext" id="qtext">题目加载中…</div>
+    </div>
+
+    <div class="arena">
+      <div class="panel" id="p0">
+        <div class="p-head">
+          <span class="p-name">玩家 1</span>
+          <span class="p-score" id="sc0">0</span>
+        </div>
+        <div class="p-num" id="pn0">号码 --</div>
+        <div class="opts" id="opts0"></div>
+        <div class="p-status" id="st0">抢答中…</div>
+      </div>
+      <div class="panel" id="p1">
+        <div class="p-head">
+          <span class="p-name">玩家 2</span>
+          <span class="p-score" id="sc1">0</span>
+        </div>
+        <div class="p-num" id="pn1">号码 --</div>
+        <div class="opts" id="opts1"></div>
+        <div class="p-status" id="st1">抢答中…</div>
+      </div>
+    </div>
+
+    <div class="logbox" id="logbox"></div>
+
+    <div class="acts-end" id="actsEnd">
+      <button class="btn btn-start" id="againBtn" style="max-width:220px">再 来 一 局</button>
+      <button class="btn btn-draw" id="backBtn" style="max-width:220px">重 新 抽 取</button>
+    </div>
+  </section>
+
+</div>
+
+<!-- 结算浮层 -->
+<div class="overlay" id="overlay">
+  <div class="result-card">
+    <div class="result-title" id="resultTitle">对战结束</div>
+    <div class="result-sub" id="resultSub"></div>
+    <div class="result-scores">
+      <div class="rs rs0">
+        <div class="rs-name">玩家 1</div>
+        <div class="rs-num" id="rn0">号码 --</div>
+        <div class="rs-score" id="rs0">0</div>
+      </div>
+      <div class="rs rs1">
+        <div class="rs-name">玩家 2</div>
+        <div class="rs-num" id="rn1">号码 --</div>
+        <div class="rs-score" id="rs1">0</div>
+      </div>
+    </div>
+    <div class="result-btns">
+      <button class="btn btn-start" id="againBtn2" style="max-width:260px">再 来 一 局</button>
+      <button class="btn btn-draw" id="backBtn2" style="max-width:260px">重 新 抽 取</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+const rnd = (a, b) => Math.floor(Math.random() * (b - a + 1)) + a;
+
+/* ================= 音效系统（Web Audio 合成） ================= */
+let audioCtx = null;
+
+function getAudio() {
+  if (!audioCtx) {
+    try {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    } catch (e) { return null; }
+  }
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  return audioCtx;
+}
+
+function playTone(freq, dur, type, vol, delay) {
+  const ctx = getAudio();
+  if (!ctx) return;
+  const t = ctx.currentTime + (delay || 0);
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.type = type || 'sine';
+  osc.frequency.setValueAtTime(freq, t);
+  gain.gain.setValueAtTime(0, t);
+  gain.gain.linearRampToValueAtTime(vol || 0.1, t + 0.012);
+  gain.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+  osc.start(t);
+  osc.stop(t + dur + 0.03);
+}
+
+/* 抽号滚动：短促电子滴答 */
+function playTick() {
+  playTone(1300 + Math.random() * 500, 0.04, 'square', 0.032);
+}
+/* 号码揭晓：欢快上行和弦 C-E-G-C */
+function playReveal() {
+  const notes = [523.25, 659.25, 783.99, 1046.5];
+  notes.forEach((f, i) => playTone(f, 0.38, 'sine', 0.12, i * 0.075));
+}
+/* 答对：明亮上行 D-F#-A-D */
+function playCorrect() {
+  const notes = [587.33, 739.99, 880, 1174.66];
+  notes.forEach((f, i) => playTone(f, 0.28, 'triangle', 0.15, i * 0.065));
+}
+/* 答错：低闷下行 */
+function playWrong() {
+  playTone(349.23, 0.2, 'triangle', 0.15);
+  playTone(261.63, 0.5, 'triangle', 0.17, 0.16);
+  playTone(207.65, 0.6, 'sine', 0.1, 0.28);
+}
+
+let tickTimer = null;
+function startTick() { stopTick(); tickTimer = setInterval(playTick, 130); }
+function stopTick() { if (tickTimer) { clearInterval(tickTimer); tickTimer = null; } }
+
+/* ================= 全屏按钮 ================= */
+$('fsBtn').addEventListener('click', () => {
+  getAudio();
+  const el = document.documentElement;
+  if (!document.fullscreenElement) {
+    const req = el.requestFullscreen || el.webkitRequestFullscreen || el.msRequestFullscreen;
+    if (req) req.call(el).catch(() => {});
+  } else {
+    const exit = document.exitFullscreen || document.webkitExitFullscreen || document.msExitFullscreen;
+    if (exit) exit.call(document).catch(() => {});
+  }
+});
+
+/* ================= 题库（20 道，随机抽 5 道） ================= */
+const QUESTIONS = [
+  { text:'海南博鳌零碳示范区探索低碳发展的有效路径，利用既有空间，通过废弃物利用转化等方式降低能耗，减少碳排放。这体现了海南博鳌零碳示范区积极践行（　）',
+    options:['绿色发展理念','开放发展理念','协调发展理念','均衡发展理念'], answer:0 },
+  { text:'在推进生态文明建设过程中，习近平总书记提出“绿水青山就是金山银山”的重要理念，强调保护生态环境就是保护生产力，改善生态环境就是发展生产力，这一理念深刻体现了新发展理念中的（　）',
+    options:['创新发展注重的是解决发展动力问题，强调科技创新是第一动力','协调发展注重的是解决发展不平衡问题，强调统筹兼顾','绿色发展注重的是解决人与自然和谐共生问题，强调可持续发展','开放发展注重的是解决发展内外联动问题，强调互利共赢'], answer:2 },
+  { text:'翠色满园关不住，城市新景扑面来。2026年元旦前后，茂名多地推进城市公园提质升级，推行拆墙透绿、免费开放、全局共享，让绿地空间真正融入市民生活，满足群众休闲健身、亲近自然的美好生活需要。茂名市这一做法（　）①优化城市公共服务，坚持以人民为中心　②补齐生态民生短板，增强群众幸福感受　③推动城乡区域协调，促进城乡融合发展　④坚持全面对外开放，提升内外联动水平',
+    options:['①②','①④','②③','③④'], answer:0 },
+  { text:'习近平主席在二〇二六年新年贺词中指出，科技与产业深度融合，创新成果竞相涌现，人工智能大模型你追我赶，芯片自主研发有了新突破，我国成为创新力上升最快的经济体之一……人形机器人亮出“功夫模式”，无人机演绎绚丽“烟花”。这表明（　）①我国科技创新水平领先世界　②科技创新增强了发展新动能　③我国不断增强发展的整体性　④创新是引领发展的第一动力',
+    options:['①②','①③','②④','③④'], answer:2 },
+  { text:'2025年，我国多地推进“一刻钟便民生活圈”建设，完善社区养老、托育、医疗等公共服务设施。这（　）①体现了以人民为中心的发展思想　②有利于满足人民对美好生活的需要　③说明政府在资源配置中起决定性作用　④从根本上解决了发展不平衡不充分问题',
+    options:['①②','①③','②④','③④'], answer:0 },
+  { text:'2025年1月1日起，《重庆市社会保障卡一卡通条例》正式施行。该条例明确了社保卡在社会保障、旅游观光和金融服务等重点民生领域的应用，施行后将以法治方式推动社会保障卡在川渝地区多领域实现互认互通。此举旨在（　）①推进区域社保制度的全面改革　②实现区域间的协调高质量发展　③满足人民群众美好生活的需要　④为解决民生问题提供法律依据',
+    options:['①③','①④','②③','②④'], answer:2 },
+  { text:'2026年央视春晚上，从展现科技创新与大国工匠风采的节目，到融合传统技艺与现代创意的舞台呈现，再到汇聚各领域奋斗者、建设者的生动演绎，中国在科技、文化、产业等方面不断突破，实现从跟跑到领跑的精彩蜕变。这说明（　）',
+    options:['创新是引领发展的第一动力','创新是高质量发展的发展思想','我国科技创新能力还需要进一步提高','创新是新时代经济发展的主题'], answer:0 },
+  { text:'物产中大集团作为浙江省属特大型国有控股上市公司，始终以省委“八八战略”为指引，集团党委成立工作小组，聚焦人工智能、新能源等战略性新兴产业，把握科技创新方向，不断提升企业竞争力。可见，该公司（　）①注重解决发展动力问题　②坚持党的全面领导　③注重解决发展内外联动问题　④生产经营不存在市场风险',
+    options:['①②','①④','②③','③④'], answer:0 },
+  { text:'2026年我国全面实施生态环境损害赔偿制度，探索建立碳足迹、水足迹核算体系，对重点行业开展全生命周期环境监管。建立健全生态环境监管制度（　）①是贯彻绿色发展理念、推动发展方式转型的内在要求　②有利于实现生态效益、经济效益、社会效益有机统一　③能够从根本上解决生态环境脆弱、资源约束趋紧问题　④完善生态文明制度体系，推动人与自然和谐共生',
+    options:['①②③','①②④','①③④','②③④'], answer:1 },
+  { text:'作为中国历史最久、规模最大的综合性国际贸易盛会，广交会享有“中国第一展”等美誉，是连接全球的贸易之桥、沟通之桥、友谊之桥。2025年10月，第138届中国进出口商品交易会（广交会）在广州开幕，这是中大型规模专业展会首选的举办平台，让中外企业共享发展机遇。广交会的召开（　）',
+    options:['通过落实开放理念解决发展动力问题','体现了我国践行互利共赢的开放战略','有利于降低国外参展企业的经营风险','通过消除负面清单解决内外联动问题'], answer:1 },
+  { text:'还原真实驾驶舱环境和操作流程，C919仿真机吸引观众排队体验、拍照打卡；坐进“太空舱”模拟太空旅行，体验航天电磁推进技术的未来应用……依托新技术、新手段，让青少年在沉浸式体验中深度感知前沿科技的力量。积极参加类似活动，能够（　）①改变我国科技现状　②奠定民族振兴基石　③开发自身创造潜力　④培养自身创新精神',
+    options:['①②','①④','②③','③④'], answer:3 },
+  { text:'习近平主席在2025年新年贺词中指出，家事国事天下事，让人民过上幸福生活是头等大事。坚持以人民为中心的发展思想，是习近平主席情到深处自然而然的思想流露。之所以要坚持以人民为中心的发展思想，是因为这一思想（　）①把实现人民幸福作为发展的基本前提　②注重的是解决发展动力问题　③反映了坚持人民主体地位的内在要求　④彰显了人民至上的价值取向',
+    options:['①②','①④','③④','②③'], answer:2 },
+  { text:'提高基本养老金水平，新版医保药品目录新入选药品平均降价61.7%，保障性住房建设加快推进，稳就业一揽子政策落地显效，新就业形态就业人员职业伤害保障试点工作取得积极成效……我国2023年取得的上述发展成就，共同体现了（　）',
+    options:['依法执政、科学执政、民主执政','发展为了人民、发展依靠人民','坚持以人民为中心的发展思想','人民群众是社会发展的主体力量'], answer:2 },
+  { text:'中国国际供应链促进博览会聚焦促进全球产业链供应链合作，注重绿色低碳发展、数字化转型，有利于协同推进生态环境保护和经济发展，助力中国与世界各国务实合作绿色发展，共建全球发展共同体。协同推进生态环境保护和经济发展需要我们（　）①秉承绿色发展理念，走可持续发展之路　②坚持生态第一，控制发展的规模与速度　③坚持以人民为中心，走生态良好发展道路　④坚持共享发展理念，解决发展不平衡问题',
+    options:['①②','②④','①③','③④'], answer:2 },
+  { text:'近年来，北京市按照“七有”“五性”要求，以便民提质为导向，围绕“市民有感知”，坚持一手抓便民生活圈建设，一手抓生活服务行业发展，不断满足市民日益增长的美好生活需要，助力国际消费中心城市和国际一流的和谐宜居之都建设。北京市这一做法（　）①坚持由部分富裕到共同富裕之路　②做到了发展为了人民和依靠人民　③坚持了以人民为中心的发展思想　④致力于改善民生、增进人民福祉',
+    options:['①②','①④','②③','③④'], answer:3 },
+  { text:'中共中央、国务院印发了《中国教育现代化2035》，并发出通知，要求各地区各部门结合实际认真贯彻落实。《中国教育现代化2035》指出，要坚持以人民为中心的发展思想，顺应人民期盼，让教育发展成果更多、更公平地惠及全民。让教育发展成果更多、更公平地惠及全民，主要体现了（　）①发展为了人民　②发展依靠人民　③发展成果由人民共享　④自觉拜人民为师',
+    options:['①②','①③','②④','③④'], answer:1 },
+  { text:'长江经济带建设坚持生态优先，依托长江黄金水道，推动沿江地区高质量发展。这体现的新发展理念是（　）',
+    options:['绿色发展','协调发展','开放发展','创新发展'], answer:0 },
+  { text:'2025年底，海南如期实现全岛封关运作。海南全岛封关运作后，将围绕“贸易自由便利、投资自由便利、跨境资金流动自由便利”等核心任务，打造高水平开放新高地。这一举措与我国下列哪一发展理念和战略最相契合（　）①创新发展理念　②开放发展理念　③区域协调发展战略　④互利共赢的开放战略',
+    options:['①②','①③','②④','③④'], answer:2 },
+  { text:'粮食安全是国家安全的重要基础，是治国安邦的头等大事。2026年我国持续夯实农业生产基础，不断完善惠农、助农、兴农政策，大力扶持现代农业发展，补齐农村农业发展短板。这一系列举措主要践行的新发展理念是（　）',
+    options:['协调理念','开放理念','创新理念','共享理念'], answer:0 },
+  { text:'“十五五”规划纲要将“加快高水平科技自立自强，引领发展新质生产力”置于前所未有的战略高度，作为推动高质量发展的核心驱动力和关键着力点。这体现了（　）',
+    options:['共享发展理念','开放发展理念','创新发展理念','绿色发展理念'], answer:2 }
+];
+
+/* ================= 抽取页元素 ================= */
+const drawBtn   = $('drawBtn');
+const startBtn  = $('startBtn');
+const numAEl    = $('numA');
+const numBEl    = $('numB');
+const rangeMinEl= $('rangeMin');
+const rangeMaxEl= $('rangeMax');
+const rangeHint = $('rangeHint');
+
+let drawing = false;
+let currentA = null, currentB = null;
+
+function getRange() {
+  let mn = parseInt(rangeMinEl.value, 10);
+  let mx = parseInt(rangeMaxEl.value, 10);
+  if (!Number.isFinite(mn)) mn = 1;
+  if (!Number.isFinite(mx)) mx = 2;
+  mn = Math.max(1, Math.min(998, mn));
+  mx = Math.max(2, Math.min(999, mx));
+  return { mn, mx };
+}
+
+function checkRange() {
+  const { mn, mx } = getRange();
+  const ok = mx > mn;
+  rangeMinEl.classList.toggle('err', !ok);
+  rangeMaxEl.classList.toggle('err', !ok);
+  rangeHint.classList.toggle('err', !ok);
+  rangeHint.textContent = ok ? `共 ${mx - mn + 1} 个号码` : '最大值需大于最小值';
+  drawBtn.disabled = drawing || !ok;
+  return ok;
+}
+
+rangeMinEl.addEventListener('input', checkRange);
+rangeMaxEl.addEventListener('input', checkRange);
+rangeMinEl.addEventListener('blur', () => { rangeMinEl.value = getRange().mn; checkRange(); });
+rangeMaxEl.addEventListener('blur', () => { rangeMaxEl.value = getRange().mx; checkRange(); });
+
+drawBtn.addEventListener('click', () => {
+  if (drawing || !checkRange()) return;
+  getAudio();
+
+  const { mn, mx } = getRange();
+  drawing = true;
+  drawBtn.disabled = true;
+  startBtn.disabled = true;
+  drawBtn.textContent = '抽 取 中 …';
+  rangeMinEl.disabled = true;
+  rangeMaxEl.disabled = true;
+  numAEl.classList.add('rolling');
+  numBEl.classList.add('rolling');
+  numAEl.textContent = '--';
+  numBEl.textContent = '--';
+  currentA = currentB = null;
+
+  startTick();
+
+  const startTime = performance.now();
+  const DURATION = 2000;
+  let lastTick = 0;
+
+  function step(now) {
+    const t = now - startTime;
+    if (t < DURATION) {
+      if (now - lastTick > 40) {
+        lastTick = now;
+        numAEl.textContent = rnd(mn, mx);
+        numBEl.textContent = rnd(mn, mx);
+      }
+      requestAnimationFrame(step);
+    } else {
+      finishDraw(mn, mx);
+    }
+  }
+  requestAnimationFrame(step);
+});
+
+function finishDraw(mn, mx) {
+  stopTick();
+  playReveal();
+
+  const a = rnd(mn, mx);
+  let b;
+  do { b = rnd(mn, mx); } while (b === a && mx > mn);
+  currentA = a;
+  currentB = b;
+  numAEl.textContent = a;
+  numBEl.textContent = b;
+  numAEl.classList.remove('rolling');
+  numBEl.classList.remove('rolling');
+  numAEl.classList.add('pop');
+  numBEl.classList.add('pop');
+  setTimeout(() => { numAEl.classList.remove('pop'); numBEl.classList.remove('pop'); }, 450);
+
+  drawing = false;
+  drawBtn.textContent = '抽 取 号 码';
+  rangeMinEl.disabled = false;
+  rangeMaxEl.disabled = false;
+  checkRange();
+  startBtn.disabled = false;
+}
+
+checkRange();
+
+/* ================= 视图切换 ================= */
+function switchView(name) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('on'));
+  $('view-' + name).classList.add('on');
+  window.scrollTo(0, 0);
+}
+
+/* ================= 对战逻辑 ================= */
+const P = [{ name:'玩家 1', num:'--' }, { name:'玩家 2', num:'--' }];
+
+const els = {
+  panel: [$('p0'), $('p1')],
+  sc: [$('sc0'), $('sc1')],
+  pnum: [$('pn0'), $('pn1')],
+  opts: [$('opts0'), $('opts1')],
+  st: [$('st0'), $('st1')],
+  qnum: $('qnum'),
+  qtime: $('qtime'),
+  qtext: $('qtext'),
+  qbar: $('qbarFill'),
+  logbox: $('logbox'),
+  actsEnd: $('actsEnd'),
+  overlay: $('overlay')
+};
+
+const QUESTION_COUNT = 5;
+const TIME_LIMIT = 25000;
+const NEXT_DELAY = 2000;
+
+const state = {
+  list: [], qi: 0, scores: [0,0], locked: [false,false], correct: [false,false],
+  wrongPick: [null,null], correctCount: 0, revealed: false, busy: false,
+  timerId: null, endTime: 0
+};
+
+function pickQuestions() {
+  const arr = QUESTIONS.slice();
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr.slice(0, QUESTION_COUNT);
+}
+
+function log(html) {
+  const d = document.createElement('div');
+  d.className = 'log-item';
+  d.innerHTML = html;
+  els.logbox.appendChild(d);
+  els.logbox.scrollTop = els.logbox.scrollHeight;
+}
+
+function clearTimer() {
+  if (state.timerId) { clearInterval(state.timerId); state.timerId = null; }
+}
+
+function startTimer() {
+  clearTimer();
+  state.endTime = performance.now() + TIME_LIMIT;
+  els.qbar.classList.remove('done');
+  els.qbar.style.width = '100%';
+  els.qbar.classList.remove('low');
+  els.qtime.classList.remove('low');
+  els.qtime.textContent = '25s';
+  state.timerId = setInterval(() => {
+    const remain = Math.max(0, state.endTime - performance.now());
+    els.qbar.style.width = (remain / TIME_LIMIT * 100) + '%';
+    els.qtime.textContent = Math.ceil(remain / 1000) + 's';
+    const isLow = remain < 8000;
+    els.qbar.classList.toggle('low', isLow);
+    els.qtime.classList.toggle('low', isLow);
+    if (remain <= 0) { clearTimer(); endQuestion(); }
+  }, 60);
+}
+
+function buildOptions() {
+  const q = state.list[state.qi];
+  for (let p = 0; p < 2; p++) {
+    const box = els.opts[p];
+    box.innerHTML = '';
+    q.options.forEach((text, i) => {
+      const b = document.createElement('button');
+      b.className = 'opt';
+      b.dataset.idx = i;
+      b.innerHTML = `<span class="opt-key">${'ABCD'[i]}</span><span class="opt-txt">${text}</span>`;
+      b.addEventListener('click', () => answer(p, i));
+      box.appendChild(b);
+    });
+  }
+}
+
+function render() {
+  const q = state.list[state.qi];
+  els.qnum.textContent = `第 ${state.qi + 1} / ${state.list.length} 题`;
+  els.qtext.textContent = q.text;
+  els.sc[0].textContent = state.scores[0];
+  els.sc[1].textContent = state.scores[1];
+  els.pnum[0].textContent = `号码 ${P[0].num}`;
+  els.pnum[1].textContent = `号码 ${P[1].num}`;
+  for (let p = 0; p < 2; p++) {
+    const st = els.st[p];
+    st.classList.remove('ok', 'bad');
+    if (state.correct[p]) { st.textContent = '已答对 ✓'; st.classList.add('ok'); }
+    else if (state.locked[p]) { st.textContent = '已锁定 · 不得再答'; st.classList.add('bad'); }
+    else { st.textContent = state.revealed ? '本题结束' : '抢答中…'; }
+    const btns = els.opts[p].children;
+    for (let i = 0; i < btns.length; i++) {
+      const b = btns[i];
+      b.classList.remove('reveal-right', 'pick-wrong', 'pick-right');
+      if (state.revealed && i === q.answer) b.classList.add('reveal-right');
+      if (state.wrongPick[p] === i) b.classList.add('pick-wrong');
+      if (state.correct[p] && i === q.answer) b.classList.add('pick-right');
+      b.disabled = state.busy || state.revealed || state.locked[p] || state.correct[p];
+    }
+    const canAnswer = !state.busy && !state.revealed && !state.locked[p] && !state.correct[p];
+    els.panel[p].classList.toggle('active', canAnswer);
+  }
+}
+
+function answer(p, i) {
+  if (state.busy || state.revealed || state.locked[p] || state.correct[p]) return;
+  const q = state.list[state.qi];
+
+  if (i === q.answer) {
+    playCorrect();
+    const pts = state.correctCount === 0 ? 10 : 5;
+    state.correctCount++;
+    state.scores[p] += pts;
+    state.correct[p] = true;
+    log(`<b>${P[p].name}</b> 抢答正确，获得 <b>${pts}</b> 分`);
+  } else {
+    playWrong();
+    state.scores[p] -= 10;
+    state.locked[p] = true;
+    state.wrongPick[p] = i;
+    log(`<b>${P[p].name}</b> 答错，扣 <b>10</b> 分，答题区域已锁定`);
+  }
+  render();
+
+  const done0 = state.locked[0] || state.correct[0];
+  const done1 = state.locked[1] || state.correct[1];
+  if (done0 && done1) endQuestion();
+}
+
+function endQuestion() {
+  if (state.busy) return;
+  state.busy = true;
+  clearTimer();
+  state.revealed = true;
+  els.qbar.style.width = '100%';
+  els.qbar.classList.remove('low');
+  els.qbar.classList.add('done');
+  els.qtime.classList.remove('low');
+  els.qtime.textContent = '—';
+  render();
+  const q = state.list[state.qi];
+  log(`本题正确答案为 <b>${'ABCD'[q.answer]}</b>：${q.options[q.answer]}`);
+  setTimeout(() => {
+    state.qi++;
+    if (state.qi >= state.list.length) endGame();
+    else nextQuestion();
+  }, NEXT_DELAY);
+}
+
+function nextQuestion() {
+  state.locked = [false, false];
+  state.correct = [false, false];
+  state.wrongPick = [null, null];
+  state.correctCount = 0;
+  state.revealed = false;
+  state.busy = false;
+  buildOptions();
+  render();
+  startTimer();
+}
+
+function startBattle() {
+  getAudio();
+  P[0].num = currentA === null ? '--' : currentA;
+  P[1].num = currentB === null ? '--' : currentB;
+  state.list = pickQuestions();
+  state.qi = 0;
+  state.scores = [0, 0];
+  els.logbox.innerHTML = '';
+  els.actsEnd.style.display = 'none';
+  els.overlay.classList.remove('on');
+  switchView('battle');
+  log(`对战开始：<b>${P[0].name}（号码 ${P[0].num}）</b> 对阵 <b>${P[1].name}（号码 ${P[1].num}）</b>`);
+  log(`本局随机抽取 <b>${state.list.length}</b> 道题，每题 <b>25</b> 秒，双方都答完后 2 秒进入下一题`);
+  nextQuestion();
+}
+
+function endGame() {
+  clearTimer();
+  state.busy = true;
+  state.revealed = true;
+  const s0 = state.scores[0], s1 = state.scores[1];
+  let title, sub;
+  if (s0 > s1) { title = '玩家 1 获胜'; sub = `领先 ${s0 - s1} 分`; }
+  else if (s1 > s0) { title = '玩家 2 获胜'; sub = `领先 ${s1 - s0} 分`; }
+  else { title = '平局'; sub = '双方实力相当'; }
+  $('resultTitle').textContent = title;
+  $('resultSub').textContent = sub;
+  $('rn0').textContent = `号码 ${P[0].num}`;
+  $('rn1').textContent = `号码 ${P[1].num}`;
+  $('rs0').textContent = s0;
+  $('rs1').textContent = s1;
+  els.overlay.classList.add('on');
+  els.actsEnd.style.display = 'flex';
+  log(`🏁 对战结束，最终比分 <b>${s0} : ${s1}</b> —— ${title}`);
+}
+
+startBtn.addEventListener('click', startBattle);
+$('againBtn').addEventListener('click', startBattle);
+$('againBtn2').addEventListener('click', startBattle);
+
+function backToDraw() {
+  clearTimer();
+  state.busy = true;
+  els.overlay.classList.remove('on');
+  switchView('draw');
+}
+$('backBtn').addEventListener('click', backToDraw);
+$('backBtn2').addEventListener('click', backToDraw);
+
+state.list = QUESTIONS.slice(0, 1);
+render();
+</script>
+</body>
+</html>
